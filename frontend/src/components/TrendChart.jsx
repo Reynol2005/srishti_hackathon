@@ -68,7 +68,7 @@ export default function TrendChart({ data }) {
                 tickLine={false}
               />
               <YAxis
-                domain={[0, 100]}
+                domain={[0, 20]}
                 tick={{ fill: '#94a3b8', fontSize: 12 }}
                 axisLine={false}
                 tickLine={false}

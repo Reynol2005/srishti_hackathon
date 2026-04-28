@@ -1,0 +1,103 @@
+{
+  "name": "EcoVoice Daily Nudge",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 19,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Daily 7 PM Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/waste_reports?report_date=eq.{{ $now.format('yyyy-MM-dd') }}&select=phone_number,daily_eco_score",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_KEY }}" },
+            { "name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SERVICE_KEY }}" }
+          ]
+        },
+        "options": { "response": { "response": { "responseFormat": "json" } } }
+      },
+      "id": "fetch-reports",
+      "name": "Fetch Today Reports",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [440, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Aggregate today's reports\nconst reports = $input.all().map(i => i.json);\n\nif (reports.length === 0) {\n  return [{ json: { skip: true, reason: 'No reports today' } }];\n}\n\n// Flatten if nested array\nconst flat = Array.isArray(reports[0]) ? reports[0] : reports;\n\n// Compute average score\nconst totalScore = flat.reduce((sum, r) => sum + (r.daily_eco_score || 0), 0);\nconst avgScore = (totalScore / flat.length).toFixed(1);\n\n// Find top performer\nconst scoreboard = {};\nfor (const r of flat) {\n  const phone = r.phone_number || 'unknown';\n  scoreboard[phone] = (scoreboard[phone] || 0) + (r.daily_eco_score || 0);\n}\n\nlet topPhone = null, topScore = -1;\nfor (const [phone, score] of Object.entries(scoreboard)) {\n  if (score > topScore) { topScore = score; topPhone = phone; }\n}\n\n// Mask phone: +91-9876543210 → 987***210\nconst maskPhone = (p) => {\n  if (!p) return '***';\n  const d = p.replace(/\\D/g, '');\n  return d.length < 6 ? '***' : d.slice(0,3) + '***' + d.slice(-3);\n};\n\n// Get unique phones\nconst uniquePhones = [...new Set(flat.map(r => r.phone_number))];\n\n// Build SMS body\nconst smsBody = `🌿 EcoVoice Update: Your community scored an average of ${avgScore} today! User ${maskPhone(topPhone)} is leading the street. Tip for tomorrow: separating wet waste earns you +10 points! ♻️`;\n\nreturn uniquePhones.map(phone => ({\n  json: { phone, message: smsBody, avgScore, topPhone: maskPhone(topPhone) }\n}));"
+      },
+      "id": "compute-stats",
+      "name": "Compute Stats & Build SMS",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SMS_GATEWAY_URL || 'http://192.168.1.42:8765' }}/send-sms",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-API-Key", "value": "={{ $env.SMS_GATEWAY_API_KEY || 'ecovoice-hackathon-2026' }}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            { "name": "phone", "value": "={{ $json.phone }}" },
+            { "name": "message", "value": "={{ $json.message }}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "send-sms",
+      "name": "Send SMS via Gateway",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [880, 300],
+      "continueOnFail": true
+    }
+  ],
+  "connections": {
+    "Daily 7 PM Trigger": {
+      "main": [
+        [{ "node": "Fetch Today Reports", "type": "main", "index": 0 }]
+      ]
+    },
+    "Fetch Today Reports": {
+      "main": [
+        [{ "node": "Compute Stats & Build SMS", "type": "main", "index": 0 }]
+      ]
+    },
+    "Compute Stats & Build SMS": {
+      "main": [
+        [{ "node": "Send SMS via Gateway", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "instanceId": "ecovoice-hackathon-2026"
+  }
+}

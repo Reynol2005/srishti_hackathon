@@ -46,11 +46,13 @@ export function useWasteReports() {
       setLoading(true);
       const { sevenDaysAgo } = getWeekBounds();
 
+      const sevenDaysAgoStr = sevenDaysAgo.toISOString().split('T')[0];
+
       const { data, error: fetchError } = await supabase
         .from('waste_reports')
         .select('*')
-        .gte('created_at', sevenDaysAgo.toISOString())
-        .order('created_at', { ascending: false });
+        .gte('report_date', sevenDaysAgoStr)
+        .order('report_date', { ascending: false });
 
       if (fetchError) throw fetchError;
       setReports(data || []);
@@ -106,7 +108,7 @@ export function useWasteReports() {
     reports.forEach((r) => {
       const phone = r.phone_number || 'unknown';
       if (!scoreMap[phone]) scoreMap[phone] = 0;
-      scoreMap[phone] += Number(r.score) || 0;
+      scoreMap[phone] += Number(r.daily_eco_score) || 0;
     });
 
     return Object.entries(scoreMap)
@@ -118,11 +120,12 @@ export function useWasteReports() {
   // Today's Average
   const todayAverage = (() => {
     const { todayStart } = getWeekBounds();
+    const todayStr = todayStart.toISOString().split('T')[0];
     const todayReports = reports.filter(
-      (r) => new Date(r.created_at) >= todayStart
+      (r) => r.report_date === todayStr
     );
     if (todayReports.length === 0) return 0;
-    const sum = todayReports.reduce((acc, r) => acc + (Number(r.score) || 0), 0);
+    const sum = todayReports.reduce((acc, r) => acc + (Number(r.daily_eco_score) || 0), 0);
     return (sum / todayReports.length).toFixed(1);
   })();
 
@@ -140,9 +143,9 @@ export function useWasteReports() {
     }
 
     reports.forEach((r) => {
-      const key = new Date(r.created_at).toISOString().split('T')[0];
+      const key = r.report_date;
       if (dayMap[key]) {
-        dayMap[key].scores.push(Number(r.score) || 0);
+        dayMap[key].scores.push(Number(r.daily_eco_score) || 0);
       }
     });
 

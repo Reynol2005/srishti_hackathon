@@ -3,13 +3,13 @@ export default function TodayAverage({ value }) {
 
   // Determine quality level for visual feedback
   let quality, qualityColor;
-  if (numericVal >= 80) {
+  if (numericVal >= 16) {
     quality = 'Excellent';
     qualityColor = 'quality-excellent';
-  } else if (numericVal >= 60) {
+  } else if (numericVal >= 12) {
     quality = 'Good';
     qualityColor = 'quality-good';
-  } else if (numericVal >= 40) {
+  } else if (numericVal >= 8) {
     quality = 'Average';
     qualityColor = 'quality-average';
   } else if (numericVal > 0) {
@@ -30,7 +30,7 @@ export default function TodayAverage({ value }) {
 
       <div className="average-display">
         <span className="average-number">{numericVal > 0 ? numericVal : '—'}</span>
-        <span className="average-unit">/ 100</span>
+        <span className="average-unit">/ 20</span>
       </div>
 
       <div className={`quality-badge ${qualityColor}`}>
