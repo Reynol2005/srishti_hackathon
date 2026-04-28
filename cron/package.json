@@ -1,0 +1,19 @@
+{
+  "name": "ecovoice-sms-notifier",
+  "version": "1.0.0",
+  "description": "End-of-day SMS nudge system for EcoVoice — sends community scores and tips via Twilio",
+  "main": "notifier.js",
+  "scripts": {
+    "start": "node notifier.js",
+    "dry-run": "DRY_RUN=true node notifier.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.1",
+    "twilio": "^5.5.1",
+    "dotenv": "^16.4.7"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "MIT"
+}
