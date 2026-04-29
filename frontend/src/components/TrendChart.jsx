@@ -58,8 +58,9 @@ export default function TrendChart({ data }) {
             >
               <CartesianGrid
                 strokeDasharray="3 3"
-                stroke="rgba(148,163,184,0.15)"
+                stroke="rgba(148,163,184,0.12)"
                 vertical={false}
+                horizontalPoints={[]}
               />
               <XAxis
                 dataKey="day"
@@ -69,6 +70,7 @@ export default function TrendChart({ data }) {
               />
               <YAxis
                 domain={[0, 20]}
+                ticks={[0, 5, 10, 15, 20]}
                 tick={{ fill: '#94a3b8', fontSize: 12 }}
                 axisLine={false}
                 tickLine={false}

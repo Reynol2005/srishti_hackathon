@@ -131,14 +131,15 @@ export function useWasteReports() {
 
   // Trend Data: average score per day over last 7 days
   const trendData = (() => {
-    const { sevenDaysAgo } = getWeekBounds();
     const dayMap = {};
+    const now = new Date();
 
-    // Initialize all 7 days
-    for (let i = 0; i < 7; i++) {
-      const d = new Date(sevenDaysAgo);
-      d.setDate(d.getDate() + i);
-      const key = d.toISOString().split('T')[0];
+    // Initialize all 7 days using local dates (avoids timezone shift)
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+      const key = d.getFullYear() + '-' +
+        String(d.getMonth() + 1).padStart(2, '0') + '-' +
+        String(d.getDate()).padStart(2, '0');
       dayMap[key] = { day: key, scores: [] };
     }
 

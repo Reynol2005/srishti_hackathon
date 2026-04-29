@@ -18,10 +18,58 @@ export default function App() {
       <header className="header">
         <div className="header-content">
           <div className="logo-group">
-            <span className="logo-icon">♻️</span>
+            <svg className="logo-svg" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="leafGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#34d399" />
+                  <stop offset="50%" stopColor="#6366f1" />
+                  <stop offset="100%" stopColor="#a78bfa" />
+                </linearGradient>
+                <filter id="leafGlow">
+                  <feGaussianBlur stdDeviation="2" result="glow" />
+                  <feMerge>
+                    <feMergeNode in="glow" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+              </defs>
+              <g filter="url(#leafGlow)">
+                <path
+                  d="M24 4C24 4 8 12 8 28c0 8.837 7.163 16 16 16s16-7.163 16-16C40 12 24 4 24 4z"
+                  fill="url(#leafGrad)"
+                  opacity="0.15"
+                />
+                <path
+                  d="M24 4C24 4 8 12 8 28c0 8.837 7.163 16 16 16s16-7.163 16-16C40 12 24 4 24 4z"
+                  stroke="url(#leafGrad)"
+                  strokeWidth="2"
+                  fill="none"
+                />
+                <path
+                  d="M24 44V20"
+                  stroke="url(#leafGrad)"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+                <path
+                  d="M24 28c-5-5-10-3-12-1"
+                  stroke="url(#leafGrad)"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  fill="none"
+                />
+                <path
+                  d="M24 22c4-4 9-3 11-1"
+                  stroke="url(#leafGrad)"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  fill="none"
+                />
+              </g>
+            </svg>
             <div>
               <h1 className="title">EcoVoice</h1>
-              <p className="tagline">Community Waste Sorting Dashboard</p>
+              <p className="tagline">Community Dashboard</p>
             </div>
           </div>
           <StatusBar loading={loading} error={error} reportCount={reports.length} />
@@ -57,7 +105,7 @@ export default function App() {
       </main>
 
       <footer className="footer">
-        <p>Built for Srishti Hackathon 2026 · Realtime powered by Supabase</p>
+        <p>Hackathon 2026</p>
       </footer>
     </div>
   );

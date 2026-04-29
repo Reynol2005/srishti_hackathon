@@ -11,7 +11,6 @@ export default function StatusBar({ loading, error, reportCount }) {
   return (
     <div className="status-bar">
       <div className="status-left">
-        <span className={`status-dot ${error ? 'dot-error' : 'dot-live'}`} />
         <span className="status-text">
           {error ? 'Connection Error' : loading ? 'Syncing...' : 'Live'}
         </span>
