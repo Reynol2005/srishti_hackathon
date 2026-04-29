@@ -20,7 +20,7 @@ export default function App() {
           <div className="logo-group">
             <span className="logo-icon">♻️</span>
             <div>
-              <h1 className="title">WasteWise</h1>
+              <h1 className="title">EcoVoice</h1>
               <p className="tagline">Community Waste Sorting Dashboard</p>
             </div>
           </div>
