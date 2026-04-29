@@ -140,9 +140,17 @@ body {
   gap: 0.75rem;
 }
 
-.logo-icon {
-  font-size: 2rem;
-  filter: drop-shadow(0 0 8px var(--accent-glow));
+.logo-svg {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.3));
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.logo-svg:hover {
+  transform: scale(1.1) rotate(-5deg);
+  filter: drop-shadow(0 0 16px rgba(99, 102, 241, 0.5));
 }
 
 .title {
@@ -531,6 +539,22 @@ body {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
+/* Global override for Recharts default tooltip wrapper */
+.recharts-default-tooltip {
+  background-color: #1E1E2D !important;
+  border: 1px solid rgba(99, 102, 241, 0.3) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+}
+
+.recharts-tooltip-item {
+  color: #e2e8f0 !important;
+}
+
+.recharts-tooltip-label {
+  color: #94a3b8 !important;
+}
+
 .tooltip-label {
   font-size: 0.75rem;
   color: var(--text-muted);
@@ -560,6 +584,19 @@ body {
 .lb-page:hover {
   transform: none;
   box-shadow: none;
+}
+
+/* ── Info Icon Tooltip ──────────────────────────────────── */
+.lb-info-icon {
+  font-size: 0.9rem;
+  cursor: help;
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+  margin-left: 0.25rem;
+}
+
+.lb-info-icon:hover {
+  opacity: 1;
 }
 
 /* ── Tab Pills ─────────────────────────────────────────── */
@@ -783,6 +820,11 @@ body {
   outline: none;
   cursor: pointer;
   transition: border-color 0.2s;
+}
+
+.my-phone-picker select option {
+  background-color: #161625;
+  color: var(--text-primary);
 }
 
 .my-phone-picker select:focus {

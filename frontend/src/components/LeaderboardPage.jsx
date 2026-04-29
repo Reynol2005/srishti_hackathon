@@ -222,6 +222,9 @@ export default function LeaderboardPage({ reports }) {
       <div className="card-header">
         <span className="card-icon">🏆</span>
         <h2>Leaderboard</h2>
+        <span className="lb-info-icon" title="Points are accumulated from each daily eco-score (max 20/day). Segregation earns +10, low volume +5, reuse +5. Colonies sum all member scores.">
+          ℹ️
+        </span>
       </div>
 
       {/* Tab pills */}
@@ -349,7 +352,17 @@ export default function LeaderboardPage({ reports }) {
                       <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.1)" vertical={false} />
                       <XAxis dataKey="day" tick={{ fill: '#94a3b8', fontSize: 11 }} tickLine={false} axisLine={false} />
                       <YAxis domain={[0, 20]} tick={{ fill: '#94a3b8', fontSize: 11 }} tickLine={false} axisLine={false} />
-                      <Tooltip contentStyle={{ background: '#161625', border: '1px solid rgba(99,102,241,0.3)', borderRadius: 8, fontSize: 12 }} />
+                      <Tooltip
+                        contentStyle={{
+                          background: '#1E1E2D',
+                          border: '1px solid rgba(99,102,241,0.3)',
+                          borderRadius: 8,
+                          fontSize: 12,
+                        }}
+                        itemStyle={{ color: '#e2e8f0' }}
+                        labelStyle={{ color: '#94a3b8', marginBottom: 4 }}
+                        cursor={{ fill: 'rgba(99,102,241,0.08)' }}
+                      />
                       <Bar dataKey="points" radius={[4, 4, 0, 0]} maxBarSize={32}>
                         {myReport.weekData.map((_, i) => (
                           <Cell key={i} fill={i === 6 ? '#6366f1' : '#818cf8'} fillOpacity={i === 6 ? 1 : 0.6} />
@@ -382,10 +395,34 @@ export default function LeaderboardPage({ reports }) {
               {/* Nudge */}
               <div className="my-nudge">{myReport.nudge}</div>
 
-              {/* Share */}
-              <button className="my-share-btn" onClick={handleShare}>
-                {copied ? '✅ Copied!' : '📤 Share My Score'}
-              </button>
+              {/* Individual Data Logs */}
+              <div className="my-section">
+                <h3>📝 All Individual Logs</h3>
+                {myReport.monthReps > 0 ? (
+                  <ul className="lb-list">
+                    {reports
+                      .filter(r => r.phone_number === activePhone)
+                      .sort((a, b) => new Date(b.report_date) - new Date(a.report_date))
+                      .map(rep => (
+                        <li key={rep.id || rep.report_date} className="lb-row">
+                          <span className="lb-pts" style={{minWidth: '70px'}}>{rep.report_date}</span>
+                          <div className="lb-info">
+                            <span className="lb-name">
+                              {rep.is_segregated ? '✅ Segregated' : '❌ Not Segregated'}
+                            </span>
+                            <span className="lb-members">
+                              Vol: {['', 'Low', 'Med', 'High'][rep.volume_level]} | 
+                              {rep.is_reused ? ' ♻️ Reused' : ' ❌ No Reuse'}
+                            </span>
+                          </div>
+                          <span className="lb-pts">{rep.daily_eco_score} <small>pts</small></span>
+                        </li>
+                      ))}
+                  </ul>
+                ) : (
+                  <p className="my-no-data">No data available.</p>
+                )}
+              </div>
             </>
           )}
         </div>
