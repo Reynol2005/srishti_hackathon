@@ -40,18 +40,18 @@ export function useWasteReports() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch initial data
+  // Fetch initial data — grab current month for monthly leaderboard
   const fetchReports = useCallback(async () => {
     try {
       setLoading(true);
-      const { sevenDaysAgo } = getWeekBounds();
-
-      const sevenDaysAgoStr = sevenDaysAgo.toISOString().split('T')[0];
+      const now = new Date();
+      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+      const monthStartStr = monthStart.toISOString().split('T')[0];
 
       const { data, error: fetchError } = await supabase
         .from('waste_reports')
         .select('*')
-        .gte('report_date', sevenDaysAgoStr)
+        .gte('report_date', monthStartStr)
         .order('report_date', { ascending: false });
 
       if (fetchError) throw fetchError;

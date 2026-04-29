@@ -1,5 +1,5 @@
 import { useWasteReports } from './hooks/useWasteReports';
-import Leaderboard from './components/Leaderboard';
+import LeaderboardPage from './components/LeaderboardPage';
 import TodayAverage from './components/TodayAverage';
 import TrendChart from './components/TrendChart';
 import StatusBar from './components/StatusBar';
@@ -40,19 +40,18 @@ export default function App() {
         )}
 
         <div className="dashboard-grid">
-          {/* Today's Average — hero position */}
+          {/* Row 1: Today's Average + Trend Chart side by side */}
           <div className="grid-hero">
             <TodayAverage value={todayAverage} />
           </div>
 
-          {/* Leaderboard */}
-          <div className="grid-leaderboard">
-            <Leaderboard data={leaderboard} />
+          <div className="grid-trend-side">
+            <TrendChart data={trendData} />
           </div>
 
-          {/* Trend Chart — full width */}
-          <div className="grid-trend">
-            <TrendChart data={trendData} />
+          {/* Row 2: Full-width Leaderboard Page */}
+          <div className="grid-leaderboard-full">
+            <LeaderboardPage reports={reports} />
           </div>
         </div>
       </main>
